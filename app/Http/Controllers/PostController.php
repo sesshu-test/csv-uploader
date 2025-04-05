@@ -4,9 +4,18 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Post;
+use App\Http\Requests\StorePostRequest;
+use App\Services\PostService;
 
 class PostController extends Controller
 {
+    protected PostService $postService;
+
+    public function __construct(PostService $postService)
+    {
+        $this->postService = $postService;
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -24,11 +33,17 @@ class PostController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * 投稿機能
+     * ユーザが入力した値を保存し、ビューを返す
+     *
+     * @param StorePostRequest $request
+     * @return void
      */
-    public function store(Request $request)
+    public function store(StorePostRequest $request)
     {
-        return view('post.index');
+        $input = $request->validated();
+        $post = $this->postService->store($input);
+        return view('post.index', compact('post'));
     }
 
     /**
