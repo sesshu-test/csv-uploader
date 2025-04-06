@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\View\View;
 use App\Models\Post;
 use App\Http\Requests\StorePostRequest;
 use App\Services\PostService;
@@ -17,11 +18,14 @@ class PostController extends Controller
     }
 
     /**
-     * Display a listing of the resource.
+     * 投稿一覧ページを表示
+     *
+     * @return View
      */
-    public function index()
+    public function index(): View
     {
-        return view('post.index');
+        $posts = $this->postService->getPaginatedPosts();
+        return view('post.index', compact('posts'));
     }
 
     /**
@@ -34,12 +38,12 @@ class PostController extends Controller
 
     /**
      * 投稿機能
-     * ユーザが入力した値を保存し、ビューを返す
+     * ユーザが入力した値を保存し、投稿一覧ページを表示
      *
      * @param StorePostRequest $request
-     * @return void
+     * @return View
      */
-    public function store(StorePostRequest $request)
+    public function store(StorePostRequest $request): View
     {
         $input = $request->validated();
         $post = $this->postService->store($input);
